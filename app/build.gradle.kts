@@ -70,4 +70,18 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+    // Jetpack Compose
+    implementation("androidx.compose.ui:ui:1.5.0")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha01")
+    implementation("androidx.compose.runtime:runtime:1.5.0")
+
+    // Lifecycle for Compose ViewModel
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+    // MockWebServer for testing Retrofit APIs
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
+
+    // Kotlin Coroutines Testing
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 }
