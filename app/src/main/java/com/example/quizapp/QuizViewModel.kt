@@ -52,4 +52,10 @@ class QuizViewModel : ViewModel() {
         }
         return false
     }
+
+    fun resetQuiz() {
+        currentQuestionIndex = 0
+        score = 0
+        feedback = ""
+    }
 }
