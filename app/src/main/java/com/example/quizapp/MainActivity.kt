@@ -33,7 +33,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.quizapp.ui.theme.QuizAppTheme
 
+/**
+ * Class that manages UI
+ */
 class MainActivity : ComponentActivity() {
+    /**
+     * What launches on creation
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,12 +59,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * The quiz screen that is shown
+ * @param viewModel the view model that is called from the QuizViewModel class
+ */
 @Composable
 fun QuizScreen(viewModel: QuizViewModel = viewModel()) {
     var showScore by remember { mutableStateOf(false) }
     var showFeedback by remember { mutableStateOf(false) }
     var selectedAnswer by remember { mutableStateOf<String?>(null) }
 
+    // if the score is gotten already, show it
     if (showScore) {
         // Display Score Screen
         Column(
@@ -79,6 +90,7 @@ fun QuizScreen(viewModel: QuizViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // resets the quiz if button is pressed
             Button(
                 onClick = {
                     viewModel.resetQuiz()
@@ -125,6 +137,7 @@ fun QuizScreen(viewModel: QuizViewModel = viewModel()) {
                     }
                 }
 
+                // shows the feedback once answer is selected
                 if (showFeedback) {
                     FeedbackFrame(feedback = viewModel.feedback, onDismiss = {
                         showFeedback= false
@@ -138,6 +151,11 @@ fun QuizScreen(viewModel: QuizViewModel = viewModel()) {
     }
 }
 
+/**
+ * Displays the feedback to user input
+ * @param feedback the feedback to display
+ * @param onDismiss the user dismissal
+ */
 @Composable
 fun FeedbackFrame(feedback: String, onDismiss: () -> Unit) {
     // Frame layout for feedback
