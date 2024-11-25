@@ -1,11 +1,15 @@
 package com.example.quizapp
 
 import android.os.Bundle
+import android.text.Html
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -25,6 +29,9 @@ import com.example.quizapp.ui.theme.QuizAppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d("MainActivity", "App launched")
+
         setContent {
             QuizAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -42,6 +49,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun QuizScreen(viewModel: QuizViewModel = viewModel()) {
     var showScore by remember { mutableStateOf(false) }
+    var showFeedback by remember { mutableStateOf(false) }
+    var selectedAnswer by remember { mutableStateOf<String?>(null) }
 
     if (showScore) {
         // Display Score Screen
@@ -54,24 +63,58 @@ fun QuizScreen(viewModel: QuizViewModel = viewModel()) {
         } else {
             // Display current question
             val question = viewModel.questions[viewModel.currentQuestionIndex]
-            val options = (question.incorrect_answers + question.correct_answer.orEmpty()).shuffled()
+            val decodedQuestion = Html.fromHtml(question.question).toString()
+            val options =
+                (question.incorrect_answers + question.correct_answer.orEmpty()).map { Html.fromHtml(it).toString() }
 
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = question.question, style = MaterialTheme.typography.headlineMedium)
+                Text(text = decodedQuestion, style = MaterialTheme.typography.headlineMedium)
                 Spacer(modifier = Modifier.height(16.dp))
+
 
                 options.forEach { option ->
                     Button(onClick = {
-                        if (viewModel.checkAnswer(option)) {
-                            if (!viewModel.continueToNext()) {
-                                showScore = true
-                            }
-                        }
+                        selectedAnswer = option
+                        val correct = viewModel.checkAnswer(option)
+
+                        showFeedback = true
                     }) {
                         Text(text = option)
                     }
                 }
+
+                if (showFeedback) {
+                    FeedbackFrame(feedback = viewModel.feedback, onDismiss = {
+                        showFeedback= false
+                        if (!viewModel.continueToNext()) {
+                            showScore = true
+                        }
+                    })
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun FeedbackFrame(feedback: String, onDismiss: () -> Unit) {
+    // Frame layout for feedback
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.secondary, shape = MaterialTheme.shapes.medium)
+            .padding(16.dp)
+    ) {
+        Text(
+            text = feedback,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Dismiss button to hide the feedback
+        Button(onClick = onDismiss) {
+            Text(text = "Next Question")
         }
     }
 }
