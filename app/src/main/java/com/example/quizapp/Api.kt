@@ -40,6 +40,7 @@ data class Question(
  * of class TriviaApi
  */
 object Api {
+    /** the url that we are fetching from */
     private const val BASE_URL = "https://opentdb.com/"
 
     val triviaApi: TriviaApi = Retrofit.Builder()
